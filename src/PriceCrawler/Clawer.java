@@ -44,7 +44,7 @@ public class Clawer {
 
 		String tempString = MD5.GetMD5("test".getBytes());
 		Clawer clawer = new Clawer();
-		clawer.Clawing(new String[] { "http://www.ifeng.com/" });
+		clawer.Clawing(new String[] { "http://www.jd.com/" });
 
 	}
 
