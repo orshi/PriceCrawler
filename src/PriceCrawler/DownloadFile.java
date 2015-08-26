@@ -103,4 +103,40 @@ public class DownloadFile {
 		return filePathString;
 	}
 
+	public String GetHTMLBody(String url) {
+		String contentString = null;
+		HttpGet get = new HttpGet(url);
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setConnectTimeout(5000).build();
+		get.setConfig(requestConfig);
+		try {
+			CloseableHttpResponse response = httpclient.execute(get);
+			StatusLine statusLine = response.getStatusLine();
+			int statusCode = statusLine.getStatusCode();
+
+			if (statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method fail:" + statusLine);
+			}
+
+			// Get file content
+			InputStream responseBodyContent = response.getEntity().getContent();
+			StringBuilder sbBuilder = new StringBuilder();
+
+			// Utf-8 reader
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					responseBodyContent, "UTF-8"));
+
+			int i = 0;
+			// while ((i = responseBodyContent.read()) != -1) {
+			while ((i = reader.read()) != -1) {
+				sbBuilder.append((char) i);
+			}
+			contentString = sbBuilder.toString();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
+		return contentString;
+	}
 }

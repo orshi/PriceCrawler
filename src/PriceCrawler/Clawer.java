@@ -41,8 +41,15 @@ public class Clawer {
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException {
+		
+		String commodityUrl="http://item.jd.com/1232840.html";
 
-		String tempString = MD5.GetMD5("test".getBytes());
+		PriceAnalyzer analyzer=new PriceAnalyzer();
+		
+		analyzer.GetPrice(commodityUrl);
+		
+		
+		// String tempString = MD5.GetMD5("test".getBytes());
 		Clawer clawer = new Clawer();
 		clawer.Clawing(new String[] { "http://www.jd.com/" });
 
@@ -55,11 +62,13 @@ public class Clawer {
 	}
 
 	public void Clawing(String[] seeds) {
+
+		// Anonymous class
 		LinkFilter filter = new LinkFilter() {
 
-			// Only accept links in youku
+			// Only accept url with restriction
 			public boolean accept(String url) {
-				if (url.contains(".ifeng.com"))
+				if (url.contains("jd."))
 					return true;
 				else {
 					return false;
@@ -68,18 +77,28 @@ public class Clawer {
 		};
 
 		InitClawerWithSeed(seeds);
+
 		while (!LinkedQueue.IsUnvisiedEmpty()
 				&& LinkedQueue.GetVisitedNumber() < 1000) {
 			String urlString = (String) LinkedQueue.UnVisitedUrlDeque();
 
-			DownloadFile downloadFile = new DownloadFile();
-			downloadFile.DownloadFile(urlString);
+			// Not need to save file content to local
+			// DownloadFile downloadFile = new DownloadFile();
+			// downloadFile.DownloadFile(urlString);
+
+			if (urlString.contains("item.jd.com/")) {
+				DownloadFile df = new DownloadFile();
+				String htmlBody = df.GetHTMLBody(urlString);
+				// Todo:Add methods to analyze page,extract price, id, name
+			}
+			
 			LinkedQueue.AddVisitedUrl(urlString);
 
 			Set<String> linksSet = HTMLParserTool.ExtractLinks(urlString,
 					filter);
 
 			for (String UnvisitString : linksSet) {
+				
 				LinkedQueue.UnVisitedUrlEnque(UnvisitString);
 
 			}
