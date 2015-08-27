@@ -43,10 +43,10 @@ public abstract class AbatractFrontier {
 
 		DatabaseConfig dbconfig0 = new DatabaseConfig();
 		dbconfig0.setTransactional(true);
-		dbConfig.setAllowCreate(true);
+		dbconfig0.setAllowCreate(true);
 
 		// open database
-		database = env.openDatabase(null, "URL", dbConfig);
+		database = env.openDatabase(null, "URL", dbconfig0);
 
 	}
 
