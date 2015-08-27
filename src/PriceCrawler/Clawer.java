@@ -40,7 +40,7 @@ import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 public class Clawer {
 
 	@SuppressWarnings("deprecation")
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		
 		String commodityUrl="http://item.jd.com/1232840.html";
 

@@ -10,12 +10,19 @@ import java.net.URLConnection;
 import net.sf.json.JSONObject;
 
 import org.apache.http.HttpVersion;
+import org.htmlparser.Node;
+import org.htmlparser.NodeFilter;
+import org.htmlparser.Parser;
+import org.htmlparser.filters.NodeClassFilter;
+import org.htmlparser.filters.TagNameFilter;
+import org.htmlparser.tags.HeadingTag;
+import org.htmlparser.util.NodeList;
 
 //Get price pattern;http://p.3.cn/prices/mgets?skuIds=J_'+skuid+'&type=1, e.g. http://p.3.cn/prices/mgets?skuIds=J_1529841389&type=1,
 
 public class PriceAnalyzer {
 
-	public void GetPrice(String commodityUrl) {
+	public void GetPrice(String commodityUrl) throws Exception {
 
 		// http://item.jd.com/1232840.html
 		// Get price related information
@@ -23,9 +30,8 @@ public class PriceAnalyzer {
 				commodityUrl.indexOf("item.jd.com/") + 12,
 				commodityUrl.indexOf(".html"));
 
-		String priceResult=null;
-		
-		
+		String priceResult = null;
+
 		String priceUrl = "http://p.3.cn/prices/mgets?skuIds=J_" + skuId
 				+ "&type=1";
 
@@ -57,23 +63,32 @@ public class PriceAnalyzer {
 					line = reader.readLine();
 				}
 
-				priceResult=sb.toString();
+				priceResult = sb.toString();
 			}
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
-		
-		String jsonData=priceResult.replace("[", "").replace("]", "");
-		JSONObject jsonObject=JSONObject.fromObject(jsonData);
-		
-		String price=(String)jsonObject.get("p");
-		String id=(String)jsonObject.get("id");
 
+		String jsonData = priceResult.replace("[", "").replace("]", "");
+		JSONObject jsonObject = JSONObject.fromObject(jsonData);
 
-		//Todo:get commodity name,write data into file
-		
+		String price = (String) jsonObject.get("p");
+		String id = (String) jsonObject.get("id");
 
+		// Get commodity name
+		Parser parser = new Parser(commodityUrl);
+		parser.setEncoding("utf-8");
+		NodeFilter headFilter = new NodeClassFilter(HeadingTag.class);
+
+		TagNameFilter nameFilter = new TagNameFilter("h1");
+
+		Node[] headings = parser.extractAllNodesThatMatch(nameFilter)
+				.toNodeArray();
+
+		String commodityName = headings[0].toPlainTextString();
+
+		//Todo: write id,name,price to db or file
 	}
 
 }

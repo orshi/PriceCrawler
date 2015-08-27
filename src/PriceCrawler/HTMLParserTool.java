@@ -11,6 +11,7 @@ import org.htmlparser.filters.LinkStringFilter;
 import org.htmlparser.filters.NodeClassFilter;
 import org.htmlparser.filters.OrFilter;
 import org.htmlparser.tags.FrameTag;
+import org.htmlparser.tags.HeadingTag;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.MetaTag;
 import org.htmlparser.util.NodeList;
@@ -63,7 +64,6 @@ public class HTMLParserTool {
 
 			// create a filter for tag <a>,LinkTat stands for <a>
 			NodeFilter aNodeFilter = new NodeClassFilter(LinkTag.class);
-
 			OrFilter orFilter = new OrFilter(frameFilter, aNodeFilter);
 
 			NodeList list = parser.extractAllNodesThatMatch(orFilter);
