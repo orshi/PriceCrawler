@@ -22,9 +22,9 @@ import org.htmlparser.util.NodeList;
 
 public class PriceAnalyzer {
 
-	public void GetPrice(String commodityUrl) throws Exception {
+	public static String GetPrice(String commodityUrl) throws Exception {
 
-		// http://item.jd.com/1232840.html
+		String returnResult=null;
 		// Get price related information
 		String skuId = commodityUrl.substring(
 				commodityUrl.indexOf("item.jd.com/") + 12,
@@ -88,7 +88,7 @@ public class PriceAnalyzer {
 
 		String commodityName = headings[0].toPlainTextString();
 
-		//Todo: write id,name,price to db or file
+		return "Price:"+price+"id:"+id+"Name:"+commodityName;
 	}
 
 }

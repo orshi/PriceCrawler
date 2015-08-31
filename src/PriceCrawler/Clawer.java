@@ -41,17 +41,16 @@ public class Clawer {
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception {
-		
-		String commodityUrl="http://item.jd.com/1232840.html";
 
-		PriceAnalyzer analyzer=new PriceAnalyzer();
-		
+		String commodityUrl = "http://item.jd.com/1232840.html";
+
+		PriceAnalyzer analyzer = new PriceAnalyzer();
+
 		analyzer.GetPrice(commodityUrl);
-		
-		
+
 		// String tempString = MD5.GetMD5("test".getBytes());
 		Clawer clawer = new Clawer();
-		clawer.Clawing(new String[] { "http://www.jd.com/" });
+		clawer.Crawling(new String[] { "http://www.jd.com/" });
 
 	}
 
@@ -61,47 +60,52 @@ public class Clawer {
 		}
 	}
 
-	public void Clawing(String[] seeds) {
+	/**
+	 * Begin to crawl
+	 * @param seeds
+	 */
+	public void Crawling(String[] seeds) {
 
-		// Anonymous class
-		LinkFilter filter = new LinkFilter() {
+		try {
 
-			// Only accept url with restriction
-			public boolean accept(String url) {
-				if (url.contains("jd."))
-					return true;
-				else {
-					return false;
+			// Anonymous class
+			LinkFilter filter = new LinkFilter() {
+
+				// Only accept url with restriction
+				public boolean accept(String url) {
+					if (url.contains("jd."))
+						return true;
+					else {
+						return false;
+					}
+				}
+			};
+
+			InitClawerWithSeed(seeds);
+
+			while (!LinkedQueue.IsUnvisiedEmpty()
+					&& LinkedQueue.GetVisitedNumber() < 1000) {
+				String urlString = (String) LinkedQueue.UnVisitedUrlDeque();
+
+				if (urlString.contains("item.jd.com/")) {
+					DownloadFile df = new DownloadFile();
+					String htmlBody = df.GetHTMLBody(urlString);
+					String priceInformation = PriceAnalyzer.GetPrice(urlString);
+				}
+
+				LinkedQueue.AddVisitedUrl(urlString);
+
+				Set<String> linksSet = HTMLParserTool.ExtractLinks(urlString,
+						filter);
+
+				for (String UnvisitString : linksSet) {
+
+					LinkedQueue.UnVisitedUrlEnque(UnvisitString);
+
 				}
 			}
-		};
-
-		InitClawerWithSeed(seeds);
-
-		while (!LinkedQueue.IsUnvisiedEmpty()
-				&& LinkedQueue.GetVisitedNumber() < 1000) {
-			String urlString = (String) LinkedQueue.UnVisitedUrlDeque();
-
-			// Not need to save file content to local
-			// DownloadFile downloadFile = new DownloadFile();
-			// downloadFile.DownloadFile(urlString);
-
-			if (urlString.contains("item.jd.com/")) {
-				DownloadFile df = new DownloadFile();
-				String htmlBody = df.GetHTMLBody(urlString);
-				// Todo:Add methods to analyze page,extract price, id, name
-			}
-			
-			LinkedQueue.AddVisitedUrl(urlString);
-
-			Set<String> linksSet = HTMLParserTool.ExtractLinks(urlString,
-					filter);
-
-			for (String UnvisitString : linksSet) {
-				
-				LinkedQueue.UnVisitedUrlEnque(UnvisitString);
-
-			}
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 	}
 
