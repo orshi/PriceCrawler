@@ -26,6 +26,7 @@ public abstract class AbatractFrontier {
 		EnvironmentConfig envconfig = new EnvironmentConfig();
 
 		// 事务支持
+		
 		envconfig.setTransactional(true);
 		envconfig.setAllowCreate(true);
 
